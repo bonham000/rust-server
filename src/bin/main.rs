@@ -25,7 +25,7 @@ fn main() {
 fn handle_connection(listener: TcpListener) {
     let pool = ThreadPool::new(4);
 
-    for stream in listener.incoming() {
+    for stream in listener.incoming().take(2) {
         let stream = stream.unwrap();
 
         pool.execute(|| {
@@ -33,6 +33,8 @@ fn handle_connection(listener: TcpListener) {
             handle_stream(stream);
         });
     }
+
+    println!("Shutting down.");
 }
 
 fn handle_stream(mut stream: TcpStream) {
